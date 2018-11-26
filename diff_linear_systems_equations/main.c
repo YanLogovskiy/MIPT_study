@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
 {
   CHECK_COM_LINE_ARG(argc)
   
-  FILE* input_matrix_file = fopen(argv[1], "w");
-  if(input_matrix_file = NULL)
+  FILE* input_matrix_file = fopen(argv[1], "r");
+  if(!input_matrix_file)
     ERROR_OPENING(argv[1]);
 
   generateSolutionFile(input_matrix_file);
