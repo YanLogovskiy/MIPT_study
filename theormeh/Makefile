@@ -1,7 +1,7 @@
-SOURSES= main.c rungekut.c
-HEADERS= rungekut.h
+SOURSES= main.c rungekut.c exp.c
+HEADERS= rungekut.h exp.h
 
-all:	oscilator
+all:	oscillator
 
-oscilator:	$(SOURSES) $(HEADERS)
-	gcc	$(SOURSES) $(HEADERS) -o oscilator
+oscillator:	$(SOURSES) $(HEADERS)
+	gcc	$(SOURSES) $(HEADERS) -o oscillator
