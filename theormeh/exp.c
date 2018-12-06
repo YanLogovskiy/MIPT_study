@@ -7,7 +7,7 @@
 double* exp_(double t, double* x)
 {
   double l_0 = 1;
-  double omega = 1;
+  double omega = 0.1;
 
   double* x_diff = (double*) calloc(2, sizeof(double));
   /* x_vector = (x, v)

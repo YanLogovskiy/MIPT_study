@@ -8,8 +8,8 @@
 int makeAnimation(FILE* data_t, FILE* data_x)
 {
   double t_0 = 0;
-  double t_1 = 6.28;
-  int i, num_of_cadres = 10;
+  double t_1 = 62.8;
+  int i, num_of_cadres = 100;
   int dimension = 2;
   double x_0[2];
   x_0[0] = 2; //x_0 = 2
