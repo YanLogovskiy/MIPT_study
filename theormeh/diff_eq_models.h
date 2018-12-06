@@ -2,6 +2,6 @@
 #define EXP
 
 //dimension = 2
-double* exp_(double x, double* y);
+double* oscillator(double x, double* y);
 
 #endif //EXP

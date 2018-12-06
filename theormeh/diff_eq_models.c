@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdio.h>
 
-#include "exp.h"
+#include "diff_eq_models.h"
 
-double* exp_(double t, double* x)
+double* oscillator(double t, double* x)
 {
   double l_0 = 1;
   double omega = 0.1;

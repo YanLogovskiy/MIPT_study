@@ -2,12 +2,12 @@
 #include <stdio.h>
 
 #include "rungekut.h"
-#include "makeAnimation.h"
+#include "makeSimulation.h"
 
 int main(int argc, char* argv[])
 {
-  FILE* data_file_t = fopen("data_t", "w");
-  FILE* data_file_x = fopen("data_x", "w");
+  FILE* data_file_t = fopen("oscillation/data_t", "w");
+  FILE* data_file_x = fopen("oscillation/data_x", "w");
   if(!data_file_t || !data_file_x)
   {
     perror("data_files");

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "makeAnimation.h"
-#include "exp.h"
+#include "makeSimulation.h"
+#include "diff_eq_models.h"
 #include "rungekut.h"
 
 int makeAnimation(FILE* data_t, FILE* data_x)
@@ -27,7 +27,7 @@ int makeAnimation(FILE* data_t, FILE* data_x)
 
   for(i = 1; i < num_of_cadres; i++)
   {
-    x_cur = rungekut(&exp_, dimension, t_cur, x_cur, t_cur + t_step);
+    x_cur = rungekut(&oscillator, dimension, t_cur, x_cur, t_cur + t_step);
     t_cur += t_step;
     t[i] = t_cur;
     x[i] = x_cur[0];

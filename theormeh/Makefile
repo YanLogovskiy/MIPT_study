@@ -1,7 +1,7 @@
-SOURSES= main.c rungekut.c exp.c makeAnimation.c
-HEADERS= rungekut.h exp.h makeAnimation.h
+SOURSES= main.c rungekut.c diff_eq_models.c makeSimulation.c
+HEADERS= rungekut.h diff_eq_models.h makeSimulation.h
 
-all:	oscillator
+all:	simulator
 
-oscillator:	$(SOURSES) $(HEADERS)
-	gcc	$(SOURSES) $(HEADERS) -o oscillator
+simulator:	$(SOURSES) $(HEADERS)
+	gcc	$(SOURSES) $(HEADERS) -o simulator
