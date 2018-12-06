@@ -1,5 +1,5 @@
-SOURSES= main.c rungekut.c exp.c
-HEADERS= rungekut.h exp.h
+SOURSES= main.c rungekut.c exp.c makeAnimation.c
+HEADERS= rungekut.h exp.h makeAnimation.h
 
 all:	oscillator
 
