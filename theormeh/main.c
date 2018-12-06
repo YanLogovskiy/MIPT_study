@@ -6,19 +6,24 @@
 
 int main(int argc, char* argv[])
 {
-  double x_0 = 1;
-  double x_1 = 2;
+  double t_0 = 0;
+  double t_1 = 10;
+  int i, num_of_cadres = 10;
   int dimension = 2;
-  double y_0[2];
-  y_0[0] = 1;
-  y_0[1] = 1;
+  double x_0[2];
+  x_0[0] = 2; //x_0 = 2
+  x_0[1] = 0; //v_0 = 0
 
-  double* y_1 = rungekut(&exp_, dimension, x_0, y_0, x_1);
-
-  printf("\n\tx_0 = %f\t, y_0 = (%f\t, %f)\n"
-         "\tx_1 = %f\t, y_1 = (%f\t, %f)\n"
-          , x_0, y_0[0], y_0[1], x_1, y_1[0], y_1[1]);
-
+  double t_step = (t_1 - t_0) / num_of_cadres;
+  double t_cur = t_0;
+  double *x_cur = x_0;
+  printf("\n\tt_cur = %f\t, x_cur = (%f\t, %f)\n", t_cur, x_cur[0], x_cur[1]);
+  for(i = 0; i < num_of_cadres; i++)
+  {
+    x_cur = rungekut(&exp_, dimension, t_cur, x_cur, t_cur + t_step);
+    printf("\n\tt_cur = %f\t, x_cur = (%f\t, %f)\n", t_cur, x_cur[0], x_cur[1]);
+    t_cur += t_step;
+  }
   return 0;
 }
 

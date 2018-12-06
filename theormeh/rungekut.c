@@ -47,7 +47,6 @@ double* rungekut(double* (*func)(double , double* ), int dim,
     k_2 = func(x_cur + h / 2, vec_sum(y_cur, mul_vec_and_num(k_1, dim, h / 2), dim));
     k_3 = func(x_cur + h / 2, vec_sum(y_cur, mul_vec_and_num(k_2, dim, h / 2), dim));
     k_4 = func(x_cur + h, vec_sum(y_cur, mul_vec_and_num(k_3, dim, h), dim));
-    //printf("\n\tk_1 = %f, k_2 = %f, k_3 = %f, k_4 = %f", k_1[0], k_2[0], k_3[0], k_4[0]);
 
     //y_{n+1} = y_n + h/6 * (k_1 + 2*k_2 + 2*k_3 + k_4);
     
