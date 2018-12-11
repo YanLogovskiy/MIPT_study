@@ -19,3 +19,21 @@ double* oscillator(double t, double* x)
 
   return x_diff;
 }
+
+double* EulerCase(double t, double* w)
+{
+  //main moments of inertia
+  double A, B, C;
+  A = B = 3; C = 1;
+
+  double* w_diff = (double*) calloc(3, sizeof(double));
+  /* w_vector = (p, q, r)
+   * p' = (B - C)qr/A
+   * q' = (C - A)pr/B
+   * r' = (A - B)pq/C */
+  w_diff[0] = (B - C) * w[1] * w[2] / A;
+  w_diff[1] = (C - A) * w[0] * w[2] / B;
+  w_diff[2] = (A - B) * w[0] * w[1] / C;
+
+  return w_diff;
+}

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     exit(EXIT_FAILURE);
   }
 
-  makeAnimation(data_file_t, data_file_x);
+  makeOscillation(data_file_t, data_file_x);
   return 0;
 }
 
