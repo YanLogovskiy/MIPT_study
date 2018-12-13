@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "rungekut.h"
+#include "math_func.h"
 
 enum constants
 {
@@ -61,3 +61,27 @@ double* rungekut(double* (*func)(double , double* ), int dim,
   }
   return y_cur;
 }
+
+double* mul_matrix_and_vec(double* vec, int dim, double matrix[dim][dim])
+//there we assume that matrix is square so as a result we get
+//vector with the same dimension as the arguament has
+{
+  double* res_vec = (double*) calloc(dim, sizeof(double));
+  double temp = 0;
+  int i, j;
+  i = j = 0;
+
+  for(i = 0; i < dim; i++)
+  {
+    temp = 0;
+    for(j = 0; j < dim; j++)
+      temp += matrix[i][j] * vec[j];
+
+    res_vec[i] = temp;
+  }
+
+  return res_vec;
+}
+
+
+
