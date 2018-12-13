@@ -6,14 +6,14 @@
 #include "diff_eq_models.h"
 #include "math_func.h"
 
-int makeOscillation(FILE* data_t, FILE* data_x)
+void makeOscillation(FILE* data_t, FILE* data_x)
 {
   double t_0, t_1;
   t_0 = 0; t_1 = 62.8;
-  int i, num_of_cadres, dimension;  //because we make video with 25 frames per second
-  i = 0; num_of_cadres = t_1 * 25; dimension = 2;
+  int i, num_of_cadres, dim;  //because we make video with 25 frames per second
+  i = 0; num_of_cadres = t_1 * 25; dim = 2;
 
-  double x_0[dimension];
+  double x_0[dim];
   x_0[0] = 2; x_0[1] = 0; //x_0 = 2 v_0 = 0
 
   double t_step, t_cur, *x_cur;
@@ -28,7 +28,7 @@ int makeOscillation(FILE* data_t, FILE* data_x)
 
   for(i = 1; i < num_of_cadres; i++)
   {
-    x_cur = rungekut(&oscillator, dimension, t_cur, x_cur, t_cur + t_step);
+    x_cur = rungekut(&oscillator, dim, t_cur, x_cur, t_cur + t_step);
     t_cur += t_step;
     t[i] = t_cur;
     x[i] = x_cur[0];
@@ -36,53 +36,48 @@ int makeOscillation(FILE* data_t, FILE* data_x)
 
   fwrite(t, sizeof(double), num_of_cadres, data_t);
   fwrite(x, sizeof(double), num_of_cadres, data_x);
-  return 0;
 }
 
 
-int makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c)
+void makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c)
 {
   double t_0, t_1;
   t_0 = 0; t_1 = 10;
-  int i, num_of_cadres, dimension;  //because we make video with 25 frames per second
-  i = 0; num_of_cadres = t_1 * 25; dimension = 3;
-  double w_0[dimension];
-  w_0[0] = 1; w_0[1] = 1; w_0[2] = 1; //p=1, q=1, r=1
+  int i, num_of_cadres, dim;  //because we make video with 25 frames per second
+  i = 0; num_of_cadres = t_1 * 25; dim = 3;
+  double t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
 
-  double t_step, t_cur, *w_cur;
-  t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
-  t_cur = t_0; w_cur = w_0;
+  double t[num_of_cadres], w[num_of_cadres][dim], p, q, r;
+  t[0] = t_0; p = w[0][0] = 1; q = w[0][1] = 1; r = w[0][2] = 1;
 
   double A, B, C, K, tetta, phi, ksi,  ksi_d;
-  A = B = 3; C = 1; ksi = 0; //ksi_0 = 0
-  K = sqrt(pow(A*w_cur[0], 2) + pow(B*w_cur[1], 2) + pow(C*w_cur[2], 2));
-  tetta = acos(C*w_cur[2]/K);
-  phi   = acos(B*w_cur[1]/(K*sin(tetta)));
-  ksi_d = (w_cur[0] * sin(phi) + w_cur[1] * cos(phi)) / sin(tetta);
+  A = 3; B = 4; C = 1; ksi = 0;
+  K = sqrt(pow(A*p, 2) + pow(B*q, 2) + pow(C*r, 2));
+  tetta = acos(C*r/K);
+  phi   = acos(B*q/(K*sin(tetta)));
+  ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
   ksi   = ksi + ksi_d * t_step;
 
-  //these arrays are for dumping in file python will work with
-  double t[num_of_cadres], *w_array[num_of_cadres];
-  t[0] = t_0; w_array[0] = w_0;
   struct Vector a_array[num_of_cadres], b_array[num_of_cadres], c_array[num_of_cadres];
+  a_array[0].x = 1; a_array[0].y = 1; a_array[0].z = 2;
   for(i = 1; i < num_of_cadres; i++)
   {
-    w_cur = rungekut(&EulerCase, dimension, t_cur, w_cur, t_cur + t_step);
-    t_cur += t_step;
-    t[i] = t_cur;
-    w_array[i] = w_cur;
+    t[i] = t[i-1] + t_step;
+    p = w[i][0] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[0];
+    q = w[i][1] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[1];
+    r = w[i][2] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[2];
 
-    tetta = acos(C*w_cur[2]/K);
-    phi   = acos(B*w_cur[1]/(K*sin(tetta)));
-    ksi_d = (w_cur[0] * sin(phi) + w_cur[1] * cos(phi)) / sin(tetta);
+    K = sqrt(pow(A*p, 2) + pow(B*q, 2) + pow(C*r, 2));
+    tetta = acos(C*r/K);
+    phi   = acos(B*q/(K*sin(tetta)));
+    ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
     ksi   = ksi + ksi_d * t_step;
-
+    
+    a_array[i] = *rotateVector(tetta, phi, ksi, a_array[i-1]);
+    b_array[i] = *rotateVector(tetta, phi, ksi, b_array[i-1]);
+    c_array[i] = *rotateVector(tetta, phi, ksi, c_array[i-1]);
   }
-
-
- 
-  //fwrite(t, sizeof(double), num_of_cadres, data_t);
-  return 0;
+  fwrite(t, sizeof(double), num_of_cadres, data_t);
 }
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,

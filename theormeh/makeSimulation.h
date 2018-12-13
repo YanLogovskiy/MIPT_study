@@ -10,9 +10,9 @@ struct Vector
   double t;
 };
 
-int makeOscillation(FILE* data_t, FILE* data_x);
+void makeOscillation(FILE* data_t, FILE* data_x);
 
-int makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c);
+void makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c);
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,
     struct Vector vec);

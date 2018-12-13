@@ -24,7 +24,7 @@ double* EulerCase(double t, double* w)
 {
   //main moments of inertia
   double A, B, C;
-  A = B = 3; C = 1;
+  A = 3; B = 4; C = 1;
 
   double* w_diff = (double*) calloc(3, sizeof(double));
   /* w_vector = (p, q, r)
