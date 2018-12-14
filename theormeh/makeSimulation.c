@@ -39,10 +39,10 @@ void makeOscillation(FILE* data_t, FILE* data_x)
 }
 
 
-void makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c)
+void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_b, FILE* data_c)
 {
   double t_0, t_1;
-  t_0 = 0; t_1 = 10;
+  t_0 = 0; t_1 = 2;
   int i, num_of_cadres, dim;  //because we make video with 25 frames per second
   i = 0; num_of_cadres = t_1 * 25; dim = 3;
   double t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
@@ -59,7 +59,9 @@ void makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c)
   ksi   = ksi + ksi_d * t_step;
 
   struct Vector a_array[num_of_cadres], b_array[num_of_cadres], c_array[num_of_cadres];
-  a_array[0].x = 1; a_array[0].y = 1; a_array[0].z = 2;
+  a_array[0].x = 0; a_array[0].y = 1; a_array[0].z = 2;
+  b_array[0].x = 0; b_array[0].y = 0; b_array[0].z = 2.5;
+  c_array[0].x = 0; c_array[0].y = 2; c_array[0].z = 1.5;
   for(i = 1; i < num_of_cadres; i++)
   {
     t[i] = t[i-1] + t_step;
@@ -78,6 +80,7 @@ void makeEulerCase(FILE* data_t, FILE* data_a, FILE* data_b, FILE* data_c)
     c_array[i] = *rotateVector(tetta, phi, ksi, c_array[i-1]);
   }
   fwrite(t, sizeof(double), num_of_cadres, data_t);
+  fwrite(w, sizeof(double) * dim, num_of_cadres, data_w);
 }
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,
@@ -99,7 +102,7 @@ struct Vector* rotateVector(double tetta, double phi, double ksi,
   rotation_2[1][2] = -sin(tetta);
   rotation_2[2][1] = sin(tetta);
   rotation_2[2][2] = cos(tetta);
-  res_vec = mul_matrix_and_vec(vec_, 3, rotation_2);
+  res_vec = mul_matrix_and_vec(res_vec, 3, rotation_2);
 
   double rotation_3[3][3] = {};
   rotation_3[0][0] = cos(phi);

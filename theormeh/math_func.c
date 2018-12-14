@@ -83,5 +83,3 @@ double* mul_matrix_and_vec(double* vec, int dim, double matrix[dim][dim])
   return res_vec;
 }
 
-
-
