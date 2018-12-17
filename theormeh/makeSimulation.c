@@ -39,48 +39,63 @@ void makeOscillation(FILE* data_t, FILE* data_x)
 }
 
 
-void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_b, FILE* data_c)
+void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
 {
   double t_0, t_1;
-  t_0 = 0; t_1 = 2;
+  t_0 = 0; t_1 = 0.04;
   int i, num_of_cadres, dim;  //because we make video with 25 frames per second
-  i = 0; num_of_cadres = t_1 * 25; dim = 3;
+  i = 0; num_of_cadres = t_1 * 25000; dim = 3;
   double t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
 
   double t[num_of_cadres], w[num_of_cadres][dim], p, q, r;
-  t[0] = t_0; p = w[0][0] = 1; q = w[0][1] = 1; r = w[0][2] = 1;
+  t[0] = t_0; p = w[0][0] = 0.001; q = w[0][1] = 0; r = w[0][2] = 100;
 
   double A, B, C, K, tetta, phi, ksi,  ksi_d;
-  A = 3; B = 4; C = 1; ksi = 0;
+  A = 81; B = 80; C = 1; ksi = 0;
   K = sqrt(pow(A*p, 2) + pow(B*q, 2) + pow(C*r, 2));
   tetta = acos(C*r/K);
-  phi   = acos(B*q/(K*sin(tetta)));
-  ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
-  ksi   = ksi + ksi_d * t_step;
+  if(tetta == 0)
+    phi = ksi_d = 0;
+  else
+  {
+    phi   = acos(B*q/(K*sin(tetta)));
+    ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
+  }
+  ksi   = ksi + ksi_d * t_step;  
+  //printf("\tp %f\t q %f\t r %f\n", p, q, r);
+  //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
 
-  struct Vector a_array[num_of_cadres], b_array[num_of_cadres], c_array[num_of_cadres];
-  a_array[0].x = 0; a_array[0].y = 1; a_array[0].z = 2;
-  b_array[0].x = 0; b_array[0].y = 0; b_array[0].z = 2.5;
-  c_array[0].x = 0; c_array[0].y = 2; c_array[0].z = 1.5;
+  struct Vector a_array[num_of_cadres], n_array[num_of_cadres];
+  a_array[0].x = 0; a_array[0].y = 0; a_array[0].z = 1;
+  n_array[0].x = 0; n_array[0].y = -1; n_array[0].z = 0;
   for(i = 1; i < num_of_cadres; i++)
   {
     t[i] = t[i-1] + t_step;
+
     p = w[i][0] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[0];
     q = w[i][1] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[1];
     r = w[i][2] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[2];
 
     K = sqrt(pow(A*p, 2) + pow(B*q, 2) + pow(C*r, 2));
     tetta = acos(C*r/K);
-    phi   = acos(B*q/(K*sin(tetta)));
-    ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
+    if(tetta == 0)
+    phi = ksi_d = 0;
+    else
+    {
+      phi   = acos(B*q/(K*sin(tetta)));
+      ksi_d = (p * sin(phi) + q * cos(phi)) / sin(tetta);
+    }
     ksi   = ksi + ksi_d * t_step;
     
     a_array[i] = *rotateVector(tetta, phi, ksi, a_array[i-1]);
-    b_array[i] = *rotateVector(tetta, phi, ksi, b_array[i-1]);
-    c_array[i] = *rotateVector(tetta, phi, ksi, c_array[i-1]);
+    n_array[i] = *rotateVector(tetta, phi, ksi, n_array[i-1]);
+    //printf("\tp %f\t q %f\t r %f\n", p, q, r);
+    //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
   }
   fwrite(t, sizeof(double), num_of_cadres, data_t);
   fwrite(w, sizeof(double) * dim, num_of_cadres, data_w);
+  fwrite(a_array, sizeof(struct Vector), num_of_cadres, data_a);
+  fwrite(n_array, sizeof(struct Vector), num_of_cadres, data_n);
 }
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,
