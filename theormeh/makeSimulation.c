@@ -42,9 +42,9 @@ void makeOscillation(FILE* data_t, FILE* data_x)
 void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
 {
   double t_0, t_1;
-  t_0 = 0; t_1 = 0.04;
+  t_0 = 0; t_1 = 0.1;
   int i, num_of_cadres, dim;  //because we make video with 25 frames per second
-  i = 0; num_of_cadres = t_1 * 25000; dim = 3;
+  i = 0; num_of_cadres = t_1 * 2500; dim = 3;
   double t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
 
   double t[num_of_cadres], w[num_of_cadres][dim], p, q, r;
@@ -63,10 +63,10 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
   }
   ksi   = ksi + ksi_d * t_step;  
   //printf("\tp %f\t q %f\t r %f\n", p, q, r);
-  //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
+  printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
 
   struct Vector a_array[num_of_cadres], n_array[num_of_cadres];
-  a_array[0].x = 0; a_array[0].y = 0; a_array[0].z = 1;
+  a_array[0].x = 0; a_array[0].y = 0.5; a_array[0].z = 4;
   n_array[0].x = 0; n_array[0].y = -1; n_array[0].z = 0;
   for(i = 1; i < num_of_cadres; i++)
   {
@@ -87,10 +87,10 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
     }
     ksi   = ksi + ksi_d * t_step;
     
-    a_array[i] = *rotateVector(tetta, phi, ksi, a_array[i-1]);
-    n_array[i] = *rotateVector(tetta, phi, ksi, n_array[i-1]);
+    a_array[i] = *rotateVector(tetta, phi, ksi, a_array[0]);
+    n_array[i] = *rotateVector(tetta, phi, ksi, n_array[0]);
     //printf("\tp %f\t q %f\t r %f\n", p, q, r);
-    //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
+    printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
   }
   fwrite(t, sizeof(double), num_of_cadres, data_t);
   fwrite(w, sizeof(double) * dim, num_of_cadres, data_w);
@@ -99,7 +99,7 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
 }
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,
-    struct Vector vec)
+    const struct Vector vec)
 {
   double vec_[3];
   vec_[0] = vec.x; vec_[1] = vec.y; vec_[2] = vec.z;

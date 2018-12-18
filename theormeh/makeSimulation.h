@@ -14,6 +14,6 @@ void makeOscillation(FILE* data_t, FILE* data_x);
 void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n);
 
 struct Vector* rotateVector(double tetta, double phi, double ksi,
-    struct Vector vec);
+    const struct Vector vec);
 
 #endif //ANIM
