@@ -6,5 +6,6 @@ double* oscillator(double t, double* x);
 
 //dimension = 3
 double* EulerCase(double t, double* w);
+double* EulerCaseDissipation(double t, double* w);
 
 #endif //EXP

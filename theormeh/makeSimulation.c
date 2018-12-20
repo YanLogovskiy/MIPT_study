@@ -42,13 +42,13 @@ void makeOscillation(FILE* data_t, FILE* data_x)
 void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
 {
   double t_0, t_1;
-  t_0 = 0; t_1 = 0.5;
+  t_0 = 0; t_1 = 2;
   int i, num_of_cadres, dim;   
   i = 0; num_of_cadres = t_1 * 500; dim = 3;
   double t_step = (t_1 - t_0) / (num_of_cadres - 1); //one for init condition
 
   double t[num_of_cadres], w[num_of_cadres][dim], p, q, r;
-  t[0] = t_0; p = w[0][0] = 0; q = w[0][1] = 1; r = w[0][2] = 80;
+  t[0] = t_0; p = w[0][0] = 0; q = w[0][1] = 5; r = w[0][2] = 80;
 
   double A, B, C, K, tetta, phi, ksi,  ksi_d;
   A = 80; B = 80; C = 1; ksi = 0;
@@ -67,7 +67,7 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
   a_array[0].x = 0; a_array[0].y = 1; a_array[0].z = 4;
   n_array[0].x = 0; n_array[0].y = -1; n_array[0].z = 0;
 
-  printf("\t x = %f\t y = %f\t z = %f\n", a_array[i].x, a_array[i].y, a_array[i].z);
+  //printf("\t x = %f\t y = %f\t z = %f\n", a_array[i].x, a_array[i].y, a_array[i].z);
   //printf("\tp %f\t q %f\t r %f\n", p, q, r);
   //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
 
@@ -75,9 +75,9 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
   {
     t[i] = t[i-1] + t_step;
 
-    p = w[i][0] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[0];
-    q = w[i][1] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[1];
-    r = w[i][2] = (rungekut(&EulerCase, dim, t[i-1], w[i-1], t[i]))[2];
+    p = w[i][0] = (rungekut(&EulerCaseDissipation, dim, t[i-1], w[i-1], t[i]))[0];
+    q = w[i][1] = (rungekut(&EulerCaseDissipation, dim, t[i-1], w[i-1], t[i]))[1];
+    r = w[i][2] = (rungekut(&EulerCaseDissipation, dim, t[i-1], w[i-1], t[i]))[2];
 
     K = sqrt(pow(A*p, 2) + pow(B*q, 2) + pow(C*r, 2));
     tetta = acos(C*r/K);
@@ -93,7 +93,7 @@ void makeEulerCase(FILE* data_t, FILE* data_w, FILE* data_a, FILE* data_n)
     a_array[i] = *rotateVector(tetta, phi, ksi, a_array[0]);
     n_array[i] = *rotateVector(tetta, phi, ksi, n_array[0]);
 
-    printf("\t x = %f\t y = %f\t z = %f\n", a_array[i].x, a_array[i].y, a_array[i].z);
+    //printf("\t x = %f\t y = %f\t z = %f\n", a_array[i].x, a_array[i].y, a_array[i].z);
     //printf("\tp %f\t q %f\t r %f\n", p, q, r);
     //printf("\ttetta %f\t phi %f\t ksi %f\n", tetta, phi, ksi);
   }
