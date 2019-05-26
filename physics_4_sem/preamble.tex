@@ -1,0 +1,177 @@
+\usepackage[top=15mm,left=12.5mm, right=12.5mm]{geometry}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+\usepackage{url}
+\usepackage{ucs} % Для \textdegree
+
+
+\usepackage{amssymb, amsmath, multicol, amsthm}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\graphicspath{{images1/}}
+\usepackage{hyperref}
+\usepackage{titleps} % Настраивает верхний колонтитул
+\usepackage{icomma} % "Умная" запятая: $0,2$ --- число, $0, 2$ --- перечисление
+%\usepackage{wrapfig} % Обтекание рисунков текстом - очень НЕ рекомендую, можно использовать окружение minipage
+\usepackage{xifthen} 
+\usepackage{xspace}
+\usepackage{esvect} %красивый значок вектора
+\usepackage{multirow} %Позволяет набрать задачу с дано и чертой справа от него
+\usepackage{lipsum}
+\usepackage{wrapfig}
+\usepackage{floatrow} 
+\usepackage{enumitem}
+\usepackage{rotpages}
+
+\usepackage[rgb,table,xcdraw]{xcolor}
+\hypersetup{				% Гиперссылки
+	unicode=true,           % русские буквы в раздела PDF
+	colorlinks=true,       	% false: ссылки в рамках; true: цветные ссылки
+	linkcolor=black,          % внутренние ссылки
+	citecolor=black,        % на библиографию
+	filecolor=magenta,      % на файлы
+	urlcolor=blue           % на URL
+}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,petri}
+
+\binoppenalty=1000
+\parindent=0pt
+\headheight=10mm
+\parskip=7pt
+\textheight=178mm
+
+\newpagestyle{main}{%
+	\setheadrule{.4pt}%
+	\sethead
+	[\thepage][][\sectiontitle]
+	{\subsectiontitle}{}{\thepage} }	
+\pagestyle{main}
+
+\let\leq\leqslant
+\let\geq\geqslant
+
+% Дублирует знаки математических операций при переносе на новую строку
+
+\newcommand*{\hm}[1]{#1\nobreak\discretionary{}%
+{\hbox{$\mathsurround=0pt #1$}}{}}
+
+\usepackage[version=4]{mhchem}
+
+% Нестандартные математические операторы
+
+\newcommand{\divisible}{\mathop{\raisebox{-2pt}{\vdots}}}
+\newcommand{\sgn}{\operatorname{sgn}}
+
+% Сделать раздел/подраздел и добавить его в оглавление
+
+\newcommand{\sect}[1]{\section*{#1}\sectionmark{#1}\addcontentsline{toc}{section}{#1}}
+\newcommand{\subsect}[1]{\subsection*{#1}\subsectionmark{#1}\addcontentsline{toc}{subsection}{#1}}
+
+\newcounter{prob}
+\newcounter{example}
+
+% команда \prob: Нумерация в стиле Задача 1.
+% команда \complexprob: Нумерация для задач со звездочкой в стиле Задача 2*.
+% команда \labeledprob: Нумерованная задача, на которую можно сослаться с помощью \refprob.
+
+% Каждая из команд \prob, \complexprob и \labeledprob имеет необязательный аргумент, в котором указывается ссылка на источник задачи
+
+\newcommand{\prob}[1][]{% 
+\textbf{Задача \stepcounter{prob}\arabic{prob}% 
+\ifthenelse{\equal{#1}{}}{}{\textsuperscript{\cite{#1}}}}.\xspace}
+
+\newcommand{\example}[1][]{% 
+\textbf{Упражнение \stepcounter{example}\arabic{example}% 
+\ifthenelse{\equal{#1}{}}{}{\textsuperscript{\cite{#1}}}}.\xspace}
+
+\newcommand{\complexprob}[1][]{% 
+\textbf{Задача \stepcounter{prob}\arabic{prob}% 
+\ifthenelse{\equal{#1}{}}{}{\textsuperscript{\cite{#1}}}}$^*$.\xspace}
+
+\newcommand{\labeledprob}[2][]{%
+\textbf{Задача \refstepcounter{prob}\label{#2}\arabic{prob}%
+\ifthenelse{\equal{#1}{}}{}{\textsuperscript{\cite{#1}}}}.\xspace}
+
+\newcommand{\refprob}[1]{\textbf{\ref{#1}}}
+
+% Команды для оформления задач и решений
+
+\newcommand{\sol}{\textit{Решение.} }
+\newcommand{\ans}{\textit{Ответ:} }
+\newcommand{\help}{\textit{Указание.} }
+
+% Команды для оформления теории
+
+\newcommand{\defin}{\textbf{Определение.} }
+\newcommand{\theo}{\textbf{Теорема.} }
+\newcommand{\note}{\textbf{Обозначение.} }
+\newcommand{\ques}{\textbf{Вопрос.} }
+\newcommand{\rem}{\textbf{Замечание.} }
+\newcommand{\stat}{\textbf{Утверждение.} }
+%\newcommand{\example}{\textbf{Упражнение.}  }	  
+
+% Убрать квадратные скобки из списка источников
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+
+%my preamble
+% Рисунки
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage[font=small,labelfont=bf]{caption}
+
+\usepackage{hyperref}
+\usepackage[rgb]{xcolor}
+\hypersetup{				% Гиперссылки
+    colorlinks=true,       	% false: ссылки в рамках
+	urlcolor=blue          % на URL
+}
+
+%  Русский язык
+
+\usepackage[T2A]{fontenc}			% кодировка
+\usepackage[utf8]{inputenc}			% кодировка исходного текста
+\usepackage[english,russian]{babel}	% локализация и переносы
+
+
+% Математика
+\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools} 
+\usepackage{systeme}
+
+\usepackage{wasysym}
+
+
+%Заговолок
+\author{Команда менторов:)}
+\title{Методичка к смене проета "Наука в Регионы"}
+\date{\today}
+
+%for inserting code
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
