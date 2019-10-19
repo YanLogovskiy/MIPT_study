@@ -101,8 +101,8 @@ def three_diagonal_method(a, b, c, d):
 
 
 x_check = three_diagonal_method(a=a, b=c, c=b, d=f)
-error = np.linalg.norm(x_mpi - x_check) / np.linalg.norm(x_mpi)
-print(error)
+error = np.linalg.norm(x_mpi - x_check) / np.linalg.norm(x_check)
+print('diff between mpi with iteration_param and three diag method = ', error)
 
 
 # now mpi with diag^(-1) instead t
@@ -122,8 +122,8 @@ def matvecmul_diag(vec):
     return d * res
 
 x_mpi_diag, mpi_diag_errors_array = solver(f = d * f, x_0=x_0, matvec_func=matvecmul_diag)
-error = np.linalg.norm(x_mpi_diag - x_check) / np.linalg.norm(x_mpi)
-print(error)
+error = np.linalg.norm(x_mpi_diag - x_check) / np.linalg.norm(x_check)
+print('diff between mpi_diag and three diag method = ', error)
 
 
 #mpi with conjigate gradients
@@ -135,8 +135,8 @@ def append_error(x_cur):
 cg_return = cg(matrix, f, x0 = np.zeros((n)), callback=append_error, tol=1e-4)
 
 x_cg = cg_return[0]
-error = np.linalg.norm(x_cg - x_mpi)
-print(error)
+error = np.linalg.norm(x_cg - x_check) / np.linalg.norm(x_check)
+print('diff between cg and three diag = ', error)
 
 
 # plot errors and solutions
@@ -148,9 +148,11 @@ plt.plot(np.log(cg_errors_array), label='conjugated gradients')
 plt.xlabel('iteration')
 plt.ylabel('log(|Ax-f|/|f|)')
 plt.legend(loc='upper right')
-plt.show()
+#plt.show()
 plt.savefig('error_plots.jpg')
 
+
+plt.clf()
 
 plt.scatter(range(400, 600), x_mpi[400:600], label='mpi with iter param')
 plt.scatter(range(400, 600), x_mpi_diag[400:600], label='mpi_diag', marker='>')
@@ -160,5 +162,5 @@ plt.plot(range(400, 600), x_check[400:600], label='three_diag_method')
 plt.xlabel('index')
 plt.ylabel('solution')
 plt.legend(loc='upper right')
-plt.show()
+#plt.show()
 plt.savefig('solution_plots.jpg')
