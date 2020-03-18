@@ -6,31 +6,28 @@
 int main(int argc, char* argv[])
 {
     MPI_Init(&argc, &argv);
-    int size, rank;
+    int num_of_proc, rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_size(MPI_COMM_WORLD, &num_of_proc);
 
-    printf("Rank: %d\n", rank);
-    int num = 0, i = 1;
+    printf("num_of_processes: %d\n", num_of_proc);
+    int num = 0;
+    printf("Rank: %d, transmitting_num: %d\n", rank, num);
+
 
     if (rank == 0)
     {
-        num+=1;
-        MPI_Send(&num, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
+        num += 1;
+        if (num_of_proc > 1)
+            MPI_Send(&num, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
     }
     else
     {
-        for(i; i <= n; i++)
-        {
-            if (rank == i)
-            {
-                MPI_Recv(&num, 1, MPI_INT, i-1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-                printf("Recieved: %d, rank: %d\n", num, rank);
-                num+=1;
-                if (rank != (n - 1))
-                    MPI_Send(&num, 1, MPI_INT, i+1, 0, MPI_COMM_WORLD);
-            }
-        }
+        MPI_Recv(&num, 1, MPI_INT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        printf("Recieved: %d, rank: %d\n", num, rank);
+        num += 1;
+        if (rank != (num_of_proc - 1))
+            MPI_Send(&num, 1, MPI_INT, rank + 1, 0, MPI_COMM_WORLD);
     }
     MPI_Finalize();
 }

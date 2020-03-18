@@ -11,25 +11,25 @@ enum
 int main(int argc, char* argv[])
 {
     MPI_Init(&argc, &argv);
-    int P, rank; //P - number of proccesses involved, rank - process id
+    int P, rank; //P - number of processes involved, rank - process id in network group
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &P); //MPI_COMM_WORLD - id of global communcator
+    printf("num_of_processes: %d\n", P);
 
     float num = 0, sum = 0, j = 0;
     int i = 0, el_per_proc = N / P;
 
-    for(i; i < P; i++)
-        if (rank == i)
-        {
-            for(j = ((el_per_proc*i) + 1); j < (el_per_proc*(i + 1) + 1); j++)
-                sum += 1/j;
-            if (i != 0)
-                MPI_Send(&sum, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
-        }
+    if (rank != 0)
+    {
+        for(j = ((el_per_proc*rank) + 1); j < (el_per_proc*(rank + 1) + 1); j++)
+            sum += 1/j;
+        MPI_Send(&sum, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
+    }
+    else //we need proccess with id = 0, because it has access to the console we working with
+    {
+        for(j = 1; j < el_per_proc + 1; j++)
+            sum += 1/j;
 
-    //we need proccess with id = 0, because it has access to the console we working with
-    if (rank == 0)
-    { //master
         if (N % P != 0)
             for(j = (el_per_proc*P) + 1; j < N + 1; j++)
                 sum += 1/j;
