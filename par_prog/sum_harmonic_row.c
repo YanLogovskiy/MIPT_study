@@ -14,7 +14,6 @@ int main(int argc, char* argv[])
     int P, rank; //P - number of processes involved, rank - process id in network group
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &P); //MPI_COMM_WORLD - id of global communcator
-    printf("num_of_processes: %d\n", P);
 
     float num = 0, sum = 0, j = 0;
     int i = 0, el_per_proc = N / P;
