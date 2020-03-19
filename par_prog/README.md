@@ -1,1 +1,1 @@
-usage "mpirun -n <number of processes> <name_of_binary_file> [arguments]"
+usage "mpirun -n <number_of_processes> <name_of_binary_file> [arguments]"
