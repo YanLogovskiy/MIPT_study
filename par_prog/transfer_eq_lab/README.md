@@ -1,6 +1,7 @@
 The key idea of the algotithm is to fill the table below.
 Take table 3x3 as an example:
 
+|first   | second   | third     |
 |--------|----------|-----------|
 |psi(0)  |phi(dx)   |phi(2dx)   |
 |psi(dt) |U(dt, dx) |U(dt, 2dx) |
