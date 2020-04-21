@@ -40,11 +40,11 @@ void fill_matrix() {
     }
 
     int k, m;
-    for (m = 1; m < M; m++) {
+    for (m = 0; m < M; m++) {
         u[0][m] = phi(m * dx);
     }
     for (k = 0; k < (K - 1); k++) {
-        u[k + 1][0] = psi(k * dt);
+        u[k + 1][0] = psi((k + 1) * dt);
         for (m = 1; m < M; m++) {
             u[k + 1][m] = u[k][m] + dt * (func(k * dt, m * dx) -
                                     (u[k][m] - u[k][m - 1]) / dx);
