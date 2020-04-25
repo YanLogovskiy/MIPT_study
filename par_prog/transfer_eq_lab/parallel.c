@@ -53,12 +53,14 @@ int main(int argc, char **argv) {
 
 void fill_border_values_and_send() {
 
+    MPI_Barrier(MPI_COMM_WORLD);
     int k;
-    for (k = 0; k < (K - 1); k++) {
+    for (k = 0; k < (K - 2); k++) {
         u[k + 1][0] = psi((k + 1) * dt);
         MPI_Send(&(u[k + 1][0]), 1, MPI_FLOAT, root + 1, 0, MPI_COMM_WORLD);
         MPI_Barrier(MPI_COMM_WORLD);
     }
+    u[K - 1][0] = psi((k + 1) * dt);
 }
 
 void fill_and_send(int rank, int size) {
@@ -80,7 +82,6 @@ void fill_and_send(int rank, int size) {
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
-
     for (k = 1; k < K; k++) {
         for (m = m_start; m <= m_finish; m++) {
             sendbuf[(k - 1) * (M - 1) + m - 1] = u[k][m];
@@ -90,14 +91,13 @@ void fill_and_send(int rank, int size) {
     MPI_Gather(sendbuf, (K - 1) * (M - 1), MPI_DOUBLE, recvbuf, (K - 1) * (M - 1), MPI_DOUBLE, root, MPI_COMM_WORLD);
 }
 
-
-
 void receive_compute_send_cells(int k, int rank, int size, int m_start, int m_finish) {
 
-    printf("Hi from %d from %d, I am filling my data\n", rank, size);
     if (k > 0) {
         MPI_Recv(&(u[k][m_start - 1]), 1, MPI_FLOAT, rank - 1, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        printf("%d have receieved\n", rank);
+    }
+    if (rank == 1) {
+        printf("recieved: %f, k = %d, m = %d\n", u[k][m_start - 1], k, m_start - 1);
     }
 
     int m;
@@ -106,12 +106,9 @@ void receive_compute_send_cells(int k, int rank, int size, int m_start, int m_fi
                                         (u[k][m] - u[k][m - 1]) / dx);
     }
 
-    u[k][m_start - 1] = 0; //we don't need it anymore
-
     if (rank < (size - 1)) {
         MPI_Send(&(u[k + 1][m_finish]), 1, MPI_FLOAT, rank + 1, 0, MPI_COMM_WORLD);
     }
-    printf("%d have send\n", rank);
 
 }
 
@@ -123,7 +120,7 @@ void gather_and_dump_data(int size) {
     for (rank = 1; rank < size; rank++) {
         for (k = 1; k < K; k++) {
             for (m = 1; m < M; m++) {
-                u[k][m] = recvbuf[(K - 1) * (M - 1) * rank + (k - 1) * (M - 1) + m - 1];
+                u[k][m] = recvbuf[(K - 1) * (M - 1) * (rank - 1) + (k - 1) * (M - 1) + m - 1];
             }
         }
     }
