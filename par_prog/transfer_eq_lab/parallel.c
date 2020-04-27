@@ -77,7 +77,6 @@ void fill_and_send(int rank, int size) {
         m_finish = num_of_columns_to_fill * rank;
     }
 
-
     for (k = 0; k < (K - 1); k++) {
         receive_compute_send_cells(k, rank, size, m_start, m_finish);
     }
@@ -104,6 +103,7 @@ void receive_compute_send_cells(int k, int rank, int size, int m_start, int m_fi
                                         (u[k][m] - u[k][m - 1]) / dx);
     }
 
+
     if (rank < (size - 1)) {
         MPI_Send(&(u[k + 1][m_finish]), 1, MPI_DOUBLE, rank + 1, 0, MPI_COMM_WORLD);
     }
@@ -115,9 +115,9 @@ void gather_and_dump_data(int size) {
 
     int k, m, rank;
     for (rank = 1; rank < size; rank++) {
-        for (k = 1; k < K; k++) {
-            for (m = 1; m < M; m++) {
-                u[k][m] += recvbuf[(K - 1) * (M - 1) * (rank - 1) + (k - 1) * (M - 1) + m - 1];
+        for (k = 0; k < K - 1; k++) {
+            for (m = 0; m < M - 1; m++) {
+                u[k + 1][m + 1] += recvbuf[(K - 1) * (M - 1) * rank + k * (M - 1) + m];
             }
         }
     }
@@ -155,11 +155,11 @@ void initValues(int rank) {
     if (rank == root) {
         recvbuf = (double*) calloc((M - 1) * (K - 1) * max_proc_quantity, sizeof(double));
         assert(recvbuf);
+    }
 
-        int m;
-        for (m = 0; m < M; m++) {
-            u[0][m] = phi(m * dx);
-        }
+    int m;
+    for (m = 0; m < M; m++) {
+        u[0][m] = phi(m * dx);
     }
 }
 
