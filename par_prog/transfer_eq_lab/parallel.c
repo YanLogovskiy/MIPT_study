@@ -17,12 +17,12 @@ enum
 double  func(double, double);
 double  psi(double);
 double  phi(double);
-void    initValues();
+void    initValues(int);
 void    fill_and_send(int, int);
 void    receive_compute_send_cells(int, int, int, int, int);
 void    fill_border_values_and_send();
 void    gather_and_dump_data(int);
-void    free_memory();
+void    free_memory(int);
 
 int main(int argc, char **argv) {
 
@@ -31,12 +31,12 @@ int main(int argc, char **argv) {
     X = (argc >= 4) ? atoi( argv[3] ) : 10;
     M = (argc >= 5) ? atoi( argv[4] ) : 5;
 
-    initValues();
-
     MPI_Init(&argc, &argv);
     int size, rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    initValues(rank);
 
     if (rank != root) {
         fill_and_send(rank, size);
@@ -45,8 +45,10 @@ int main(int argc, char **argv) {
     if (rank == root) {
         fill_border_values_and_send();
         gather_and_dump_data(size);
-        free_memory();
     }
+
+    free_memory(rank);
+
     MPI_Finalize();
     return 0;
 }
@@ -133,7 +135,7 @@ void gather_and_dump_data(int size) {
     fclose(data_file);
 }
 
-void initValues() {
+void initValues(int rank) {
 
     dx = (double) X / M;
     dt = (double) T / K;
@@ -149,13 +151,15 @@ void initValues() {
 
     sendbuf = (double*) calloc((M - 1) * (K - 1), sizeof(double));
     assert(sendbuf);
-    recvbuf = (double*) calloc((M - 1) * (K - 1) * max_proc_quantity, sizeof(double));
-    assert(recvbuf);
 
+    if (rank == root) {
+        recvbuf = (double*) calloc((M - 1) * (K - 1) * max_proc_quantity, sizeof(double));
+        assert(recvbuf);
 
-    int m;
-    for (m = 0; m < M; m++) {
-        u[0][m] = phi(m * dx);
+        int m;
+        for (m = 0; m < M; m++) {
+            u[0][m] = phi(m * dx);
+        }
     }
 }
 
@@ -171,7 +175,7 @@ double psi(double t) {
     return t * t;
 }
 
-void free_memory() {
+void free_memory(int rank) {
     int i;
     for (i = 0; i < K; i++) {
         free(u[i]);
@@ -179,5 +183,8 @@ void free_memory() {
 
     free(u);
     free(sendbuf);
-    free(recvbuf);
+
+    if (rank == root) {
+        free(recvbuf);
+    }
 }
