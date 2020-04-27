@@ -125,9 +125,11 @@ void gather_and_dump_data(int size) {
     FILE* data_file = fopen("parallel_data.txt", "wb");
 
     for (k = 0; k < K; k++) {
-        fprintf(data_file, "%d time_step:\t\t", k);
         for (m = 0; m < M; m++) {
-            fprintf(data_file, "%.3f\t\t", u[k][m] );
+            fprintf(data_file, "%.3f", u[k][m] );
+            if (m != (M - 1)) {
+                fprintf(data_file, " ");
+            }
         }
         fprintf(data_file, "\n");
     }
