@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 float integral = 0, sigma = 0.5;
 float START = 0, END = 0.99;
@@ -33,11 +34,12 @@ float countError(float x_start, float x_end) {
     return error;
 };
 
-void *mythread(void *args) {
+void *thread_routine(void *args) {
     float res = 0, step = 0.00001, error = 0;
     float x = ((struct args*)args)->start;
+    float end = ((struct args*)args)->end;
 
-    while (x + step <= ((struct args*)args)->end) {
+    while (x + step <= end) {
         error = countError(x, x + step);
         if (error < ACCURACY) {
             step = step;
@@ -54,8 +56,8 @@ void *mythread(void *args) {
         x += step;
     }
 
-    if(x < ((struct args*)args)->end) {
-        step = ((struct args*)args)->end - x;
+    if(x < end) {
+        step = end - x;
         res += ((func(x) + func(x + step))*step)/2;
         x += step;
     }
@@ -70,18 +72,19 @@ int main(int argc, char** argv) {
     ACCURACY = (argc >= 3) ? atof( argv[2] ) : 0.0001;
 
     pthread_t *thid = malloc(ThNumber*sizeof(pthread_t));
-    pthread_t *mythid = malloc(ThNumber*sizeof(pthread_t));
     struct args *arguments = malloc(ThNumber*sizeof(struct args));
 
     float zone = END / ThNumber;
 
     int i = 0;
+    time_t clocks_1 = clock();
+
     for (i = 0; i < ThNumber; i++) {
         if (i == 0) arguments[i].start = START;
         else arguments[i].start = i * zone;
         arguments[i].end = (i + 1) * zone;
 
-        if (pthread_create(&thid[i], (pthread_attr_t *)NULL, mythread, (void*)&arguments[i]) != 0) {
+        if (pthread_create(&thid[i], (pthread_attr_t *)NULL, thread_routine, (void*)&arguments[i]) != 0) {
             printf("Error while creating a thread\n");
             exit(EXIT_FAILURE);
         }
@@ -91,7 +94,8 @@ int main(int argc, char** argv) {
         pthread_join(thid[i], (void **)NULL);
     }
 
-    printf("\nintegral = %f\n", integral);
+    time_t clocks = clock() - clocks_1;
+    printf("\nintegral = %f, computed by clocks = %ld\n", integral, clocks);
 
     return 0;
 }
