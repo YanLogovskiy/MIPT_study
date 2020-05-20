@@ -35,7 +35,7 @@ float countError(float x_start, float x_end) {
 };
 
 void *thread_routine(void *args) {
-    float res = 0, step = 0.00001, error = 0;
+    float res = 0, step = 0.01, error = 0;
     float x = ((struct args*)args)->start;
     float end = ((struct args*)args)->end;
 
