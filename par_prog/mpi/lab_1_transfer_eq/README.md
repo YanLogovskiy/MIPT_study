@@ -1,3 +1,5 @@
+__[Problem source](https://mipt.ru/drec/forstudents/study/studyMaterials/4kurs/lab1.pdf)__
+
 The key idea of the algotithm is to fill the table below.
 Take table 3x3 as an example:
 
