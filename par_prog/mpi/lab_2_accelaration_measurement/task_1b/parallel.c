@@ -7,8 +7,8 @@
 enum Num {
 	ISIZE = 1000,
 	JSIZE = 1000,
-	IN = 1,
-	JN = 3
+	IN = 3,
+	JN = 4
 };
 
 int main(int argc, char** argv) {
@@ -30,14 +30,14 @@ int main(int argc, char** argv) {
 	start_time = MPI_Wtime();
 
 	if (size == 1) {
-		for (i = IN; i < ISIZE; i++) {
-			for (j = JN; j < JSIZE - 1; j++) {
-				a[i][j] = sin(0.00001 * a[i - IN][j - JN]);
+		for (i = 0; i < ISIZE - IN; i++) {
+			for (j = JN; j < JSIZE; j++) {
+				a[i][j] = sin(0.00001 * a[i + IN][j - JN]);
 			}
 		}
 	} else {
-		int divN = (int) ( (JSIZE - 1 - JN) / size);
-		int modN = (JSIZE - 1 - JN) % size;
+		int divN = (int) ( (JSIZE - JN) / size);
+		int modN = (JSIZE - JN) % size;
 
 		int start = rank * divN;
 		int end = (rank + 1) * divN;
@@ -47,12 +47,12 @@ int main(int argc, char** argv) {
 
 		double* sendbuf = (double*) malloc((end - start) * sizeof(double));
 
-		//distance vector (+IN, +JN) -> direction vector (<, <)
-		//true dependence -> can parallel by using barrier synchro
+		//distance vector (-IN, +JN) -> direction vector (>, <)
+		//anti dependence -> can parallel by using barrier synchro
 		
-		for (int i = IN; i < ISIZE; i++) {
+		for (int i = 0; i < ISIZE - IN; i++) {
 			for(int j = start + JN; j < end + JN; j++) {
-				sendbuf[j - start - JN] = sin(0.00001 * a[i - IN][j - JN]);
+				sendbuf[j - start - JN] = sin(0.00001 * a[i + IN][j - JN]);
 			}
 			MPI_Barrier(MPI_COMM_WORLD);
 			MPI_Allgather(sendbuf, end - start, MPI_DOUBLE, &a[i][JN], end - start, MPI_DOUBLE, MPI_COMM_WORLD);

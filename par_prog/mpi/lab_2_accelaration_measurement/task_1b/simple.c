@@ -5,8 +5,8 @@
 enum Num {
 	ISIZE = 1000,
 	JSIZE = 1000,
-	IN = 1,
-	JN = 3,
+	IN = 3,
+	JN = 4,
 };
 
 int main(int argc, char **argv) {
@@ -19,9 +19,9 @@ int main(int argc, char **argv) {
             a[i][j] = 10 * i + j;
         }
     }
-    for (i = IN; i < ISIZE; i++) {
-        for (j = JN; j < JSIZE - 1; j++) {
-            a[i][j] = sin(0.00001 * a[i - IN][j - JN]);
+    for (i = 0; i < ISIZE - IN; i++) {
+        for (j = JN; j < JSIZE; j++) {
+            a[i][j] = sin(0.00001 * a[i + IN][j - JN]);
         }
     }
 
